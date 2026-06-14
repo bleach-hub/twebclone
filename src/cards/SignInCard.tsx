@@ -10,6 +10,7 @@ import {
   matchCountryByDigits,
   formatPhone
 } from '../data/countries';
+import {AUTH_CONFIG} from '../config';
 import styles from '../authFlow.module.css';
 
 const DEFAULT_ISO2 = 'AL'; // Albania, matching the reference screenshots
@@ -160,6 +161,26 @@ export default function SignInCard(): JSX.Element {
           {submitting() && <span class={styles.spinner} />}
         </button>
       </form>
+      {AUTH_CONFIG.showQrLogin && (
+        <button
+          type="button"
+          class="btn-primary btn-secondary btn-primary-transparent"
+          disabled={submitting()}
+          onClick={() => {/* TODO: navigate({name: 'signQR'}) once card exists */}}
+        >
+          Log in by QR Code &rsaquo;
+        </button>
+      )}
+      {AUTH_CONFIG.showPasskeyLogin && (
+        <button
+          type="button"
+          class="btn-primary btn-secondary btn-primary-transparent"
+          disabled={submitting()}
+          onClick={() => {/* TODO: passkey login */}}
+        >
+          Log in by passkey &rsaquo;
+        </button>
+      )}
     </AuthCard>
   );
 }

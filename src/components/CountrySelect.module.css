@@ -2,21 +2,35 @@
   position: relative;
 }
 
-/* chevron on the right of the field */
+/* Chevron on the right of the field — verbatim port of tweb's
+   `.input-field .arrow-down` (src/scss/partials/_input.scss:22). A 0×0 box
+   with right+bottom borders becomes a chevron when rotated 45°. */
 .arrow {
   position: absolute;
-  right: 0.75rem;
   top: 50%;
-  transform: translateY(-50%) rotate(0deg);
-  color: var(--secondary-text-color);
+  right: 21px;
+  height: 0;
+  width: 0;
+  border: solid var(--secondary-text-color);
+  border-radius: 1px;
+  border-width: 0 2px 2px 0;
+  display: inline-block;
+  padding: 5px;
+  vertical-align: middle;
+  z-index: 2;
+  margin-top: -9px;
+  transform: rotate(45deg);
   cursor: pointer;
-  display: flex;
-  transition: transform 0.2s ease, color 0.15s;
+  transition: 0.2s all;
 }
 
+/* Focused state mirrors tweb's `&:focus ~ .arrow-down` (_input.scss:174):
+   flip to point up, switch to the primary color, and shift down 5px so the
+   apex sits in the same place. */
 .container.open .arrow {
-  transform: translateY(-50%) rotate(180deg);
-  color: var(--primary-color);
+  margin-top: -4px;
+  transform: rotate(225deg);
+  border-color: var(--primary-color);
 }
 
 /* dropdown surface */

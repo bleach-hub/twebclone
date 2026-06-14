@@ -180,6 +180,24 @@ html.reverse::view-transition-new(root) {
   cursor: default;
 }
 
+/* Transparent variant — used by the QR-login and passkey buttons. Mirrors
+   tweb's `.btn-primary-transparent` (src/scss/partials/_button.scss:981). */
+.btn-primary-transparent {
+  color: var(--primary-color);
+  background-color: transparent;
+}
+
+.btn-primary-transparent:hover:not(:disabled) {
+  background-color: var(--light-primary-color);
+}
+
+/* Pulls the button up into the gap above so the QR/passkey buttons sit closer
+   to the Next button than the 1.5rem input-wrapper gap would put them.
+   Mirrors tweb's `.btn-secondary { margin-top: -1rem; }` (_button.scss:1143). */
+.btn-secondary {
+  margin-top: -1rem;
+}
+
 .secondary {
   color: var(--secondary-text-color);
 }
