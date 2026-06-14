@@ -4,50 +4,25 @@
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  background-color: #6ba587; /* fallback while canvas paints */
+  background-color: #000; /* base behind the dimmed night gradient */
 }
 
-.gradient,
-.darken,
+.gradient {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* mirrors tweb's .GradientCanvas (taller, shifted up) */
+  top: -25%;
+  height: 150%;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* pattern canvas is rendered once at full-screen size and anchored to the
+   top-right at its natural CSS size, so the doodles stay crisp and don't move
+   when the window is resized. */
 .pattern {
   position: absolute;
-  inset: 0;
-}
-
-/* tiny gradient canvas stretched to cover the viewport (smoothing blurs it) */
-.gradient {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* night: darken the bright gradient so the page reads dark (doodles still glow) */
-.darken {
-  background-color: #000;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-:global(.night) .darken {
-  opacity: 0.76;
-}
-
-/* doodle pattern via CSS mask over a coloured layer.
-   - background-position is anchored to a FIXED point (top, offset right) so the
-     doodles don't drift when the window is resized.
-   - day:   mask a translucent dark layer → doodles read slightly darker.
-   - night: mask a faint light layer → doodles glow over the dark base. */
-.pattern {
-  background-color: rgba(0, 0, 0, 0.05);
-  -webkit-mask-image: url('/assets/img/pattern.svg');
-  mask-image: url('/assets/img/pattern.svg');
-  -webkit-mask-size: 510px auto;
-  mask-size: 510px auto;
-  -webkit-mask-repeat: repeat;
-  mask-repeat: repeat;
-  -webkit-mask-position: right -40px top -20px;
-  mask-position: right -40px top -20px;
-}
-
-:global(.night) .pattern {
-  background-color: rgba(200, 170, 235, 0.13);
+  top: 0;
+  right: 0;
 }
