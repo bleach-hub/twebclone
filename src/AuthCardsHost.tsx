@@ -42,7 +42,7 @@ export default function AuthCardsHost(): JSX.Element {
       <Background />
       <div class={styles.host} id="auth-pages">
         <button class={styles.themeButton} onClick={onToggleTheme} title="Toggle theme">
-          <DarkModeIcon size={22} />
+          <DarkModeIcon size={24} />
         </button>
         <div class={styles.scrollable}>
           <div class={styles.placeholderTop} />

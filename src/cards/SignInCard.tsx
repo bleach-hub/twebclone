@@ -28,34 +28,30 @@ export default function SignInCard(): JSX.Element {
 
   const [countryName, setCountryName] = createSignal(initial?.country.default_name ?? '');
   const [selected, setSelected] = createSignal<CountryRow | undefined>(initial);
-  const [phone, setPhone] = createSignal(initial ? '+' + initial.code.country_code + ' ' : '+');
+  const [phone, setPhone] = createSignal(initial ? '+' + initial.code.country_code : '+');
   const [submitting, setSubmitting] = createSignal(false);
   const [error, setError] = createSignal('');
 
   let phoneEl!: HTMLInputElement;
 
   /**
-   * Dim placeholder showing the *remaining* digits to type. For pattern
-   * "XX XXX XXXX" with 2 national digits already entered, it renders the rest:
-   * the typed digits are consumed from the pattern, the leftover X's become "—",
-   * preserving the spacing so it reads "+355 12 —— ————" etc.
+   * Dim trailing placeholder (the "leftPattern" in tweb). Build the full template
+   * "+CC NN NNN NNNN" with unfilled positions as U+2012 figure dashes, then return
+   * everything after the already-typed value so typed + rest === full template.
+   * This guarantees the dim dashes line up exactly after the entered digits.
    */
   const placeholderPattern = () => {
-    const pat = selected()?.code.patterns?.[0];
+    const sel = selected();
+    const pat = sel?.code.patterns?.[0];
     if(!pat) return '';
-    const national = digits().slice(selected()!.code.country_code.length);
-    let consumed = 0;
-    let out = '';
+    const national = digits().slice(sel!.code.country_code.length);
+    let full = '+' + sel!.code.country_code + ' ';
+    let di = 0;
     for(const ch of pat) {
-      if(ch === 'X') {
-        if(consumed < national.length) consumed++;
-        else out += '—';
-      } else {
-        // keep separators only once we're past the typed portion
-        out += consumed < national.length ? '' : ch;
-      }
+      if(ch === 'X') full += di < national.length ? national[di++] : '‒';
+      else full += ch;
     }
-    return out;
+    return full.slice(phone().length);
   };
 
   const digits = () => phone().replace(/\D/g, '');
@@ -64,7 +60,7 @@ export default function SignInCard(): JSX.Element {
   function onCountrySelect(row: CountryRow) {
     setSelected(row);
     setCountryName(row.country.default_name);
-    setPhone('+' + row.code.country_code + ' ');
+    setPhone('+' + row.code.country_code);
     setError('');
     queueMicrotask(() => phoneEl?.focus());
   }
