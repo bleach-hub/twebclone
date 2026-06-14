@@ -1,0 +1,58 @@
+/* Fixed full-screen wallpaper behind the auth cards. */
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.gradient,
+.pattern {
+  position: absolute;
+  inset: 0;
+}
+
+/* ---- DAY: green 4-colour gradient ---- */
+.gradient {
+  background:
+    radial-gradient(120% 120% at 0% 0%, #dbddbb 0%, transparent 60%),
+    radial-gradient(120% 120% at 100% 0%, #d5d88d 0%, transparent 60%),
+    radial-gradient(120% 120% at 0% 100%, #88b884 0%, transparent 60%),
+    radial-gradient(120% 120% at 100% 100%, #6ba587 0%, transparent 60%),
+    #a8c69a;
+}
+
+/* doodle pattern as a mask over a dark layer → doodles slightly darker than gradient */
+.pattern {
+  background-color: rgba(40, 70, 50, 0.16);
+  -webkit-mask: url('/assets/img/pattern.svg');
+  mask: url('/assets/img/pattern.svg');
+  -webkit-mask-size: 430px auto;
+  mask-size: 430px auto;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+/* ---- NIGHT: peach→pink→purple→blue gradient, near-black base, glowing doodles ---- */
+:global(.night) .gradient {
+  background:
+    radial-gradient(120% 120% at 0% 0%, #fec496 0%, transparent 55%),
+    radial-gradient(120% 120% at 100% 0%, #dd6cb9 0%, transparent 55%),
+    radial-gradient(120% 120% at 0% 100%, #4f5bd5 0%, transparent 55%),
+    radial-gradient(120% 120% at 100% 100%, #962fbf 0%, transparent 55%),
+    #14121f;
+  /* night wallpaper is heavily darkened in Telegram (the bright gradient only
+     shows through the doodles) — dim the flat gradient so the page reads dark. */
+  opacity: 0.32;
+}
+
+:global(.night) .bg {
+  background-color: #0a0a0c;
+}
+
+:global(.night) .pattern {
+  /* bright doodles: mask a faint magenta layer so the doodle shapes glow over the dark base */
+  background-color: rgba(190, 130, 220, 0.12);
+}
