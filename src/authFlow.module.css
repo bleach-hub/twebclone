@@ -15,14 +15,19 @@
   height: 2.5rem;
   border: none;
   border-radius: 50%;
-  background-color: rgba(var(--primary-color-rgb), 0.7);
+  /* translucent "message highlighting" colour (olive in day), not the accent */
+  background-color: var(--message-highlighting-color);
   color: #fff;
-  font-size: 1.25rem;
   cursor: pointer;
   z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.themeButton:hover {
+  background-color: var(--message-highlighting-color-hover);
 }
 
 .scrollable {
@@ -92,15 +97,16 @@
 }
 
 .title {
-  margin: 0 0 0.5rem;
-  font-size: 1.75rem;
+  margin: 0 0 0.25rem;
+  font-size: 24px;
+  line-height: 30px;
   font-weight: 500;
 }
 
 .subtitle {
-  font-size: 1rem;
-  line-height: 1.3125;
-  max-width: 28ch;
+  font-size: 14px;
+  line-height: 18px;
+  max-width: 32ch;
 }
 
 .monkey,
@@ -130,16 +136,12 @@
 
 /* phone field with a dim pattern placeholder trailing the typed digits */
 .phoneField {
-  margin-top: 1rem;
+  margin-top: 1.25rem;
 }
 
-.phoneInputWrap {
-  position: relative;
-}
-
-/* ghost overlay: an invisible copy of the typed value reserves width, then the
-   dim em-dash pattern shows the remaining digits to type (like image 2) */
-.phonePlaceholder {
+/* ghost overlay sits exactly over the input: the typed part is transparent (just
+   reserves width) and the dim em-dash pattern shows the remaining digits to type */
+.phoneGhost {
   position: absolute;
   left: 0;
   top: 0;
@@ -147,20 +149,20 @@
   display: flex;
   align-items: center;
   padding: 0 1rem;
+  font-family: var(--font-regular);
   font-size: 1rem;
   pointer-events: none;
   white-space: pre;
-  letter-spacing: normal;
+  z-index: 2;
 }
 
-.phoneGhostMeasure {
+.phoneGhostTyped {
   visibility: hidden;
 }
 
-.phoneGhostPattern {
+.phoneGhostRest {
   color: var(--secondary-text-color);
-  opacity: 0.55;
-  margin-left: 0.4ch;
+  opacity: 0.7;
 }
 
 /* ---- auth code ---- */
@@ -198,7 +200,7 @@
   color: var(--color-text);
   background-color: var(--input-background);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 14px;
   outline: none;
   transition: border-color 0.15s;
 }

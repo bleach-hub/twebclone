@@ -137,21 +137,20 @@ export default function SignInCard(): JSX.Element {
         <CountrySelect value={countryName()} onSelect={onCountrySelect} />
 
         <div class={`input-field ${styles.phoneField} ${error() ? 'error' : ''}`}>
-          <div class={styles.phoneInputWrap}>
-            <input
-              ref={phoneEl}
-              class="input-field-input"
-              type="tel"
-              inputmode="tel"
-              value={phone()}
-              onInput={onPhoneInput as any}
-              onKeyDown={onPhoneKeyDown}
-              placeholder=" "
-            />
-            <span class={styles.phonePlaceholder} aria-hidden="true">
-              <span class={styles.phoneGhostMeasure}>{phone()}</span>
-              <span class={styles.phoneGhostPattern}>{placeholderPattern()}</span>
-            </span>
+          <input
+            ref={phoneEl}
+            class="input-field-input"
+            type="tel"
+            inputmode="tel"
+            value={phone()}
+            onInput={onPhoneInput as any}
+            onKeyDown={onPhoneKeyDown}
+            placeholder=" "
+          />
+          {/* dim trailing pattern, aligned right after the typed value */}
+          <div class={styles.phoneGhost} aria-hidden="true">
+            <span class={styles.phoneGhostTyped}>{phone()}</span>
+            <span class={styles.phoneGhostRest}>{placeholderPattern()}</span>
           </div>
           <label>{error() || 'Phone Number'}</label>
         </div>
