@@ -191,11 +191,13 @@ html.reverse::view-transition-new(root) {
   background-color: var(--light-primary-color);
 }
 
-/* Pulls the button up into the gap above so the QR/passkey buttons sit closer
-   to the Next button than the 1.5rem input-wrapper gap would put them.
-   Mirrors tweb's `.btn-secondary { margin-top: -1rem; }` (_button.scss:1143). */
+/* Inside the auth `.card`, tweb overrides the base `.btn-secondary` rule
+   (authFlow.module.scss:118): a 0.5rem top gap and a non-bold weight so the
+   QR / passkey buttons sit visually lighter than Next. We only use
+   .btn-secondary in the auth flow so we apply that scoped value globally. */
 .btn-secondary {
-  margin-top: -1rem;
+  margin-top: 0.5rem;
+  font-weight: normal;
 }
 
 .secondary {
