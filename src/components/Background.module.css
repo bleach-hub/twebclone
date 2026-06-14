@@ -18,11 +18,11 @@
   object-fit: cover;
 }
 
-/* pattern canvas is rendered once at full-screen size and anchored to the
-   top-right at its natural CSS size, so the doodles stay crisp and don't move
-   when the window is resized. */
+/* pattern canvas covers the viewport; the doodle tiling is anchored to the left
+   edge and vertically centred inside renderPattern (exactly like tweb), so the
+   phase matches web.telegram.org/k. */
 .pattern {
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
 }

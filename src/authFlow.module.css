@@ -61,7 +61,7 @@
 .card {
   background-color: var(--surface-color);
   border-radius: 2rem;
-  padding: 2rem 1.5rem;
+  padding: 1rem;
   animation: cardEnter 0.2s ease;
 }
 
@@ -106,7 +106,9 @@
 .subtitle {
   font-size: 14px;
   line-height: 18px;
-  max-width: 32ch;
+  max-width: 20rem;
+  margin: 0 auto;
+  text-wrap: balance;
 }
 
 .monkey,
@@ -136,7 +138,7 @@
 
 /* phone field with a dim pattern placeholder trailing the typed digits */
 .phoneField {
-  margin-top: 1.25rem;
+  position: relative;
 }
 
 /* ghost overlay sits exactly over the input: the typed part is transparent (just
@@ -145,7 +147,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  height: 54px;
+  height: 3rem;
   display: flex;
   align-items: center;
   padding: 0 1rem;

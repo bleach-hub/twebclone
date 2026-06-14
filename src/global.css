@@ -82,19 +82,21 @@ html.reverse::view-transition-new(root) {
 /* ---- shared form primitives (mirror tweb's global .input-field/.btn) ---- */
 
 .input-wrapper {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  margin: 2rem auto 0;
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 100%;
 }
 
 .input-field {
   position: relative;
-  margin-bottom: 1rem;
 }
 
 .input-field-input {
   width: 100%;
-  height: 54px;
+  height: 3rem;
+  min-height: 3rem;
   padding: 0 1rem;
   font-family: var(--font-regular);
   font-size: 1rem;
@@ -148,7 +150,7 @@ html.reverse::view-transition-new(root) {
 .btn-primary {
   position: relative;
   width: 100%;
-  height: 54px;
+  height: 3rem;
   border: none;
   border-radius: 16px;
   font-family: var(--font-regular);

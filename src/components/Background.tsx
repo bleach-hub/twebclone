@@ -110,9 +110,11 @@ export default function Background() {
 
   function sizePatternCanvas() {
     const dpr = Math.min(2, window.devicePixelRatio);
-    // Fixed full-screen size so resizing the window doesn't re-tile / shift the doodles.
-    const cssW = Math.max(screen.width, 2200);
-    const cssH = Math.max(screen.height, 1400);
+    // Viewport-sized, exactly like tweb's pattern layer — the tiling is anchored
+    // to the viewport's left edge and vertically centred (see renderPattern), so
+    // the doodle phase matches web.telegram.org/k at the same window size.
+    const cssW = window.innerWidth;
+    const cssH = window.innerHeight;
     patternCanvas.width = Math.ceil(cssW * dpr);
     patternCanvas.height = Math.ceil(cssH * dpr);
     patternCanvas.style.width = cssW + 'px';
@@ -156,7 +158,20 @@ export default function Background() {
 
     const obs = new MutationObserver(() => paint());
     obs.observe(document.documentElement, {attributes: true, attributeFilter: ['class']});
-    onCleanup(() => obs.disconnect());
+
+    // Re-tile on resize, exactly like tweb's pattern layer.
+    let raf = 0;
+    const onResize = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => { sizePatternCanvas(); paint(); });
+    };
+    window.addEventListener('resize', onResize);
+
+    onCleanup(() => {
+      obs.disconnect();
+      window.removeEventListener('resize', onResize);
+      cancelAnimationFrame(raf);
+    });
   });
 
   return (
