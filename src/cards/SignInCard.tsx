@@ -13,23 +13,23 @@ import {
 import {AUTH_CONFIG} from '../config';
 import styles from '../authFlow.module.css';
 
-const DEFAULT_ISO2 = 'AL'; // Albania, matching the reference screenshots
-
 /**
  * Phone-number entry (port of SignInCard.tsx) with the country selector.
  * Country picker ⇄ phone field are two-way synced:
  *  - pick a country → phone field resets to "+code "
  *  - type a country code in the phone field → country selector follows
  * The phone number is formatted by the country's pattern (X = digit).
+ *
+ * Both fields start empty — matching tweb where "Country" sits as an
+ * in-field hint (placeholder) until the user picks one and the label
+ * floats up.
  */
 export default function SignInCard(): JSX.Element {
   const {navigate} = useAuthFlow();
 
-  const initial = COUNTRY_ROWS.find((r) => r.country.iso2 === DEFAULT_ISO2);
-
-  const [countryName, setCountryName] = createSignal(initial?.country.default_name ?? '');
-  const [selected, setSelected] = createSignal<CountryRow | undefined>(initial);
-  const [phone, setPhone] = createSignal(initial ? '+' + initial.code.country_code : '+');
+  const [countryName, setCountryName] = createSignal('');
+  const [selected, setSelected] = createSignal<CountryRow | undefined>(undefined);
+  const [phone, setPhone] = createSignal('');
   const [submitting, setSubmitting] = createSignal(false);
   const [error, setError] = createSignal('');
 
@@ -37,9 +37,13 @@ export default function SignInCard(): JSX.Element {
 
   /**
    * Dim trailing placeholder (the "leftPattern" in tweb). Build the full template
-   * "+CC NN NNN NNNN" with unfilled positions as U+2012 figure dashes, then return
+   * "+CC NN NNN NNNN" with unfilled positions as em-dashes (U+2014), then return
    * everything after the already-typed value so typed + rest === full template.
-   * This guarantees the dim dashes line up exactly after the entered digits.
+   *
+   * tweb uses U+2012 figure-dash, but Google Fonts' Roboto subset renders
+   * U+2012 with visible gaps on macOS (font fallback). U+2014 has full-em
+   * width in any sans-serif so adjacent dashes always touch, matching the
+   * continuous-bar look in tweb's own rendering.
    */
   const placeholderPattern = () => {
     const sel = selected();
@@ -49,7 +53,7 @@ export default function SignInCard(): JSX.Element {
     let full = '+' + sel!.code.country_code + ' ';
     let di = 0;
     for(const ch of pat) {
-      if(ch === 'X') full += di < national.length ? national[di++] : '‒';
+      if(ch === 'X') full += di < national.length ? national[di++] : '—';
       else full += ch;
     }
     return full.slice(phone().length);
