@@ -38,6 +38,39 @@
   --message-highlighting-color-hover: hsla(254, 28%, 50%, 0.48);
 }
 
+/* tweb's icon font — used inline for the chevron after "Log in by …" and
+   the next-arrow inside btn-primary (`>` in lang strings → tgico 'next'
+   glyph via langPack superFormatter, U+EA05). */
+@font-face {
+  font-family: "tgico";
+  src: url("/assets/fonts/tgico.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.tgico {
+  font-family: "tgico" !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.inline-icon {
+  vertical-align: bottom;
+  line-height: inherit !important;
+}
+
+/* tweb authFlow.module.scss scopes this to .host, but we only use
+   .btn-primary inside the auth flow so it's safe globally. */
+.btn-primary .inline-icon {
+  margin-inline-start: 0.125rem;
+}
+
 * {
   box-sizing: border-box;
 }

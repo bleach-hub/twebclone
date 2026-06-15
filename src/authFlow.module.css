@@ -141,13 +141,10 @@
   position: relative;
 }
 
-/* match the ghost's letter-spacing so the typed value and dashes align */
-.phoneField :global(.input-field-input) {
-  letter-spacing: 0.24px;
-}
-
 /* ghost overlay sits exactly over the input: the typed part is transparent (just
-   reserves width) and the dim em-dash pattern shows the remaining digits to type */
+   reserves width) and the dim em-dash pattern shows the remaining digits to type.
+   tweb applies --letter-spacing only inside `:after` (the dim pattern), NOT to
+   the typed value itself — we mirror that so "+93 123 …" isn't wider than tweb's. */
 .phoneGhost {
   position: absolute;
   left: 0;
@@ -161,7 +158,6 @@
   font-family: var(--font-regular);
   font-size: 1rem;
   line-height: 1.3125;
-  letter-spacing: 0.24px; /* matches tweb's --letter-spacing on the phone input */
   pointer-events: none;
   white-space: pre;
   z-index: 2;
@@ -173,6 +169,7 @@
 
 .phoneGhostRest {
   color: #9e9e9e; /* tweb $placeholder-color */
+  letter-spacing: 0.24px; /* tweb only applies --letter-spacing to the dim :after */
 }
 
 /* ---- auth code ---- */
