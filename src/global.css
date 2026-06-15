@@ -219,12 +219,14 @@ html.reverse::view-transition-new(root) {
   line-height: 1.3125;
   text-transform: uppercase;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  /* tweb uses text-align + line-height for centering rather than flex —
+     flex makes every text node a separate item, and `gap` then forces a
+     wide space between "QR CODE" and the chevron icon. */
+  text-align: center;
+  padding: 0;
   transition: background-color 0.15s, opacity 0.15s;
 }
+
 
 .btn-color-primary {
   background-color: var(--primary-color);
