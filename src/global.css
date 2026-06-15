@@ -17,8 +17,21 @@
   /* translucent highlight (default pattern wallpaper average) used by the theme button */
   --message-highlighting-color: hsla(85.5319, 36.9171%, 40.402%, 0.4);
   --message-highlighting-color-hover: hsla(85.5319, 36.9171%, 40.402%, 0.56);
-  --font-regular: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", sans-serif;
+  --font-regular: "Roboto", -apple-system, apple color emoji, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  /* Tokens referenced by vendored rules in tweb-vendored.css. */
+  --font-size: 16px;
+  --line-height: 1.3125;
+  --font-weight-bold: 500;
+  --font-weight-normal: 400;
+  --transform-origin-left-center: left center;
+  --reflect: 1;
+  --transition-standard-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-standard-in: 0.3s var(--transition-standard-easing);
+  --transition-standard-out: 0.25s var(--transition-standard-easing);
+  --disabled-opacity: 0.3;
+  /* themeController derives this as HSL(primary).l - 8 */
+  --dark-primary-color: hsl(211.4, 84%, 48.3%);
 }
 
 :root.night {
@@ -34,6 +47,7 @@
   --danger-color: #ff595a;
   --input-search-border-color: #2f2f2f;
   --input-background: #212121;
+  --dark-primary-color: hsl(252, 65%, 59%);
   --message-highlighting-color: hsla(254, 28%, 50%, 0.32);
   --message-highlighting-color-hover: hsla(254, 28%, 50%, 0.48);
 }
@@ -188,76 +202,38 @@ html.reverse::view-transition-new(root) {
   z-index: 0;
 }
 
-/* ---- shared form primitives (mirror tweb's global .input-field/.btn) ---- */
+/* ---- form primitives ----
+   The actual .input-field / .btn-primary rules live in tweb-vendored.css
+   (extracted verbatim from web.telegram.org/k). Only auth-flow-specific
+   tweaks live here. */
 
+/* tweb's .input-wrapper has no auto top margin; we want a top gap before
+   the first field inside the auth card. (matches authFlow.module.scss:34
+   `:global(.input-wrapper) { margin-top: 2rem; }`) */
 .input-wrapper {
-  width: 100%;
-  margin: 2rem auto 0;
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 100%;
+  margin-top: 2rem;
 }
 
-/* Ported faithfully from tweb _input.scss so the label transform, padding and
-   line-height line up to the pixel. */
-.input-field {
-  --height: 3rem;
-  --border-radius: 16px;
-  --padding: 0.8125rem;
-  --padding-horizontal: 1rem;
-  --border-width: 1px;
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
+/* tweb's input value text uses the page text colour (we keep it explicit
+   so dark mode flips correctly). The vendored rule sets the border /
+   padding / layout but not the colour. */
 .input-field-input {
-  width: 100%;
-  min-height: var(--height);
-  padding: calc(var(--padding) - var(--border-width))
-    calc(var(--padding-horizontal) - var(--border-width));
-  font-family: var(--font-regular);
-  font-size: 1rem;
-  line-height: 1.3125;
   color: var(--color-text);
-  background-color: var(--input-background);
-  border: var(--border-width) solid var(--input-search-border-color);
-  border-radius: var(--border-radius);
-  outline: none;
-  transition: 0.2s border-color;
-  position: relative;
-  z-index: 1;
-  box-sizing: border-box;
+  font-family: var(--font-regular);
+  font-size: var(--font-size);
 }
 
-.input-field-input:hover:not(:focus):not(.error) {
-  border-color: var(--primary-color);
+/* The vendored .input-field label rule has no `font` info — input fields
+   inherit from the parent. Keep the text colour explicit so the floated
+   label retains the placeholder grey until focus. */
+.input-field-input:focus ~ label {
+  color: var(--primary-color);
+  font-weight: var(--font-weight-bold);
 }
 
-.input-field-input:focus {
-  border-color: var(--primary-color);
-}
-
-/* tweb's label sits with the original (unfloated) position centered vertically
-   via top:0 + margin-top, then transforms up on focus/filled. */
-.input-field label {
-  position: absolute;
-  top: 0;
-  left: var(--padding-horizontal);
-  height: 1.5rem;
-  margin-top: calc((var(--height) - 1.5rem) / 2);
-  padding: 0;
-  font-size: 1rem;
-  line-height: 1.5rem;
-  color: var(--placeholder-color);
-  background-color: var(--surface-color);
-  pointer-events: none;
-  white-space: nowrap;
-  transform-origin: 0 50%;
-  transition: 0.2s transform, 0.2s padding, 0.1s opacity, font-weight 0s 0.1s;
-  z-index: 2;
-}
-
+/* Floated-label transform — tweb computes it in JS by toggling a class
+   on the input; we re-implement via :placeholder-shown so the empty
+   Country / Phone fields show their label as an in-field hint. */
 .input-field-input:focus ~ label,
 .input-field-input:not(:placeholder-shown) ~ label {
   transform: translate(-0.1875rem, calc(var(--height) / -2 + 0.0625rem)) scale(0.75);
@@ -265,73 +241,11 @@ html.reverse::view-transition-new(root) {
   opacity: 1;
 }
 
-/* Floated label gets the accent colour & bold only when focused (matches tweb). */
-.input-field-input:focus ~ label {
-  color: var(--primary-color);
-  font-weight: 500;
-}
-
-.input-field.error .input-field-input {
-  border-color: var(--danger-color);
-}
-
-.input-field.error label {
-  color: var(--danger-color);
-}
-
-.btn-primary {
-  position: relative;
-  width: 100%;
-  height: 3rem;
-  border: none;
-  border-radius: 16px;
-  font-family: var(--font-regular);
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: 1.3125;
-  text-transform: uppercase;
-  cursor: pointer;
-  /* tweb uses text-align + line-height for centering rather than flex —
-     flex makes every text node a separate item, and `gap` then forces a
-     wide space between "QR CODE" and the chevron icon. */
-  text-align: center;
-  padding: 0;
-  transition: background-color 0.15s, opacity 0.15s;
-}
-
-
-.btn-color-primary {
-  background-color: var(--primary-color);
-  color: #fff;
-}
-
-.btn-color-primary:hover:not(:disabled) {
-  filter: brightness(1.05);
-}
-
-.btn-primary:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
-/* Transparent variant — used by the QR-login and passkey buttons. Mirrors
-   tweb's `.btn-primary-transparent` (src/scss/partials/_button.scss:981). */
-.btn-primary-transparent {
-  color: var(--primary-color);
-  background-color: transparent;
-}
-
-.btn-primary-transparent:hover:not(:disabled) {
-  background-color: var(--light-primary-color);
-}
-
-/* Inside the auth `.card`, tweb overrides the base `.btn-secondary` rule
-   (authFlow.module.scss:118): a 0.5rem top gap and a non-bold weight so the
-   QR / passkey buttons sit visually lighter than Next. We only use
-   .btn-secondary in the auth flow so we apply that scoped value globally. */
+/* Auth-flow scoped tweak from authFlow.module.scss:118 — the QR /
+   passkey buttons sit visually lighter than Next. */
 .btn-secondary {
   margin-top: 0.5rem;
-  font-weight: normal;
+  font-weight: var(--font-weight-normal);
 }
 
 .secondary {

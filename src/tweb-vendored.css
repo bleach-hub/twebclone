@@ -1,0 +1,35 @@
+/* Verbatim CSS rules extracted from web.telegram.org/k's compiled
+   stylesheet (index-tbKkqB5-.css). Imported AFTER global.css so these
+   rules win on shared selectors (.input-field, .btn-primary, .inline-icon,
+   …), guaranteeing pixel parity with tweb's auth flow. Only auth-flow-
+   relevant rules are kept; chrome rules for chat lists, popups, etc.
+   are dropped. */
+
+.inline-icon{vertical-align:bottom;line-height:inherit!important}
+.inline-icon-left{margin-inline-end:.125rem}
+
+.input-wrapper{width:100%;margin:0 auto;display:grid;gap:1.5rem;grid-template-columns:100%}
+.input-field{--height: 3rem;--border-radius: 16px;--padding: .8125rem;--padding-horizontal: 1rem;--border-width: 1px;position:relative;display:flex;align-items:center}
+.input-field .arrow-down{position:absolute;content:" ";top:50%;bottom:0;right:21px;cursor:pointer;height:0;width:0;border:solid var(--secondary-text-color);border-radius:1px;border-width:0 2px 2px 0;display:inline-block;padding:5px;vertical-align:middle;z-index:2;margin-top:-9px;transform:rotate(45deg);transition:.2s all}
+.input-field label{position:absolute;color:#9e9e9e;top:0;inset-inline:var(--padding-horizontal) auto;z-index:2;height:1.5rem;transform:translate(0);background-color:var(--surface-color);transform-origin:var(--transform-origin-left-center);pointer-events:none;margin-top:calc((var(--height) - 1.5rem) / 2);white-space:nowrap}
+body.animation-level-2 .input-field label{transition:.2s transform,.2s padding,.1s opacity,font-weight 0s .1s}
+.input-field-border{position:absolute;inset:0;border:2px solid var(--primary-color);opacity:0;border-radius:var(--border-radius);pointer-events:none;z-index:1}
+body.animation-level-2 .input-field-border{transition:opacity .2s}
+.input-field-input{border:var(--border-width) solid var(--input-search-border-color);border-radius:var(--border-radius);background-color:var(--surface-color);padding:calc(var(--padding) - var(--border-width)) calc(var(--padding-horizontal) - var(--border-width));box-sizing:border-box;width:100%;min-height:var(--height);transition:0s border-color;position:relative;z-index:1;line-height:var(--line-height)}
+body.animation-level-0 .input-field-input{transition:none!important}
+html.no-touch .input-field-input:hover:not(:focus):not(.error):not(.valid),html.no-touch .input-field-input:active:not(:focus):not(.error):not(.valid){border-color:var(--primary-color);transition:.2s border-color}
+html.no-touch .input-field-input:hover:not(:focus):not(.error):not(.valid)~label,html.no-touch .input-field-input:active:not(:focus):not(.error):not(.valid)~label{color:var(--primary-color)}
+.input-field-input:focus{border-color:var(--primary-color)}
+.input-field-input.error{border-color:var(--danger-color)}
+.input-field-input.error~label{color:var(--danger-color)!important}
+.input-field-input.error~.input-field-border{border-color:var(--danger-color)!important}
+.input-field-input:focus~.arrow-down{margin-top:-4px;transform:rotate(225deg);border-color:var(--primary-color)}
+.input-field-phone .input-field-input{--letter-spacing: .24px}
+
+.btn-primary{border-radius:16px;width:100%;text-align:center;height:3rem;border:none;font-weight:var(--font-weight-bold);cursor:pointer;overflow:hidden;position:relative;padding:0;transition:opacity var(--transition-standard-out),background-color var(--transition-standard-out),color var(--transition-standard-out);line-height:var(--line-height);text-transform:uppercase}
+html.no-touch .btn-primary:hover,html.no-touch .btn-primary:active{background:var(--dark-primary-color)}
+.btn-primary-transparent{--ripple-color: var(--light-primary-color);color:var(--primary-color);background-color:transparent}
+html.no-touch .btn-primary-transparent:hover,html.no-touch .btn-primary-transparent:active{background:var(--light-primary-color)}
+body.animation-level-0 .btn-primary{transition:none}
+.btn-primary:disabled{pointer-events:none!important;opacity:var(--disabled-opacity)}
+.btn-color-primary{background:var(--primary-color);color:#fff}
