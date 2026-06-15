@@ -168,7 +168,7 @@ export default function SignInCard(): JSX.Element {
           disabled={submitting()}
           onClick={() => {/* TODO: navigate({name: 'signQR'}) once card exists */}}
         >
-          Log in by QR Code &rsaquo;
+          Log in by QR Code &gt;
         </button>
       )}
       {AUTH_CONFIG.showPasskeyLogin && (
@@ -178,7 +178,7 @@ export default function SignInCard(): JSX.Element {
           disabled={submitting()}
           onClick={() => {/* TODO: passkey login */}}
         >
-          Log in by passkey &rsaquo;
+          Log in by passkey &gt;
         </button>
       )}
     </AuthCard>

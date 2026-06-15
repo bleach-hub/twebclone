@@ -155,9 +155,12 @@
   height: 3rem;
   display: flex;
   align-items: center;
-  padding: 0 1rem;
+  /* match the input-field-input padding (1rem - 1px border) so typed text
+     and the dim trailing pattern line up to the pixel. */
+  padding: 0 calc(1rem - 1px);
   font-family: var(--font-regular);
   font-size: 1rem;
+  line-height: 1.3125;
   letter-spacing: 0.24px; /* matches tweb's --letter-spacing on the phone input */
   pointer-events: none;
   white-space: pre;
