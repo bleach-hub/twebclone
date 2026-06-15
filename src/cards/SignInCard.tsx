@@ -36,14 +36,10 @@ export default function SignInCard(): JSX.Element {
   let phoneEl!: HTMLInputElement;
 
   /**
-   * Dim trailing placeholder (the "leftPattern" in tweb). Build the full template
-   * "+CC NN NNN NNNN" with unfilled positions as em-dashes (U+2014), then return
-   * everything after the already-typed value so typed + rest === full template.
-   *
-   * tweb uses U+2012 figure-dash, but Google Fonts' Roboto subset renders
-   * U+2012 with visible gaps on macOS (font fallback). U+2014 has full-em
-   * width in any sans-serif so adjacent dashes always touch, matching the
-   * continuous-bar look in tweb's own rendering.
+   * Dim trailing placeholder (the "leftPattern" in tweb, formatPhoneNumber.ts:116).
+   * Build the full template "+CC NN NNN NNNN" with unfilled positions as
+   * U+2012 figure-dash (same character tweb uses); the bundled Roboto latin
+   * subset provides a full-em figure-dash glyph that renders touching.
    */
   const placeholderPattern = () => {
     const sel = selected();
@@ -53,7 +49,7 @@ export default function SignInCard(): JSX.Element {
     let full = '+' + sel!.code.country_code + ' ';
     let di = 0;
     for(const ch of pat) {
-      if(ch === 'X') full += di < national.length ? national[di++] : '—';
+      if(ch === 'X') full += di < national.length ? national[di++] : '‒';
       else full += ch;
     }
     return full.slice(phone().length);
