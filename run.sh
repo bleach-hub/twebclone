@@ -24,5 +24,5 @@ if [ ! -f data/geoip-country.mmdb ]; then
   node scripts/download-geoip.mjs
 fi
 
-echo "Starting dev server on http://localhost:$PORT"
-exec npm run dev -- --port "$PORT" --strictPort
+echo "Starting dev server on http://0.0.0.0:$PORT"
+exec npm run dev -- --host 0.0.0.0 --port "$PORT" --strictPort
