@@ -19,5 +19,10 @@ if [ ! -d node_modules ]; then
   npm install
 fi
 
+if [ ! -f data/geoip-country.mmdb ]; then
+  echo "GeoIP database missing — downloading DB-IP Country Lite…"
+  node scripts/download-geoip.mjs
+fi
+
 echo "Starting dev server on http://localhost:$PORT"
 exec npm run dev -- --port "$PORT" --strictPort
