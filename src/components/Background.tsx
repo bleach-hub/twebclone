@@ -34,6 +34,9 @@ const GH = 64;
 const PATTERN_URL = '/assets/img/pattern.svg';
 const PATTERN_W = 1440;
 const PATTERN_H = 2960;
+// localStorage cache so the doodle SVG survives cmd+shift+r (which bypasses
+// HTTP cache). Bumped if the source file changes.
+const PATTERN_CACHE_KEY = 'tweb-clone-pattern-svg-v1';
 
 function renderGradient(ctx: CanvasRenderingContext2D, colors: RGB[]) {
   const id = ctx.createImageData(GW, GH);
@@ -152,7 +155,25 @@ export default function Background() {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => { patternImg = img; paint(); };
-    img.src = PATTERN_URL;
+
+    // Try localStorage first — surviving hard refresh. Fall back to network
+    // and then warm the cache for next time.
+    let cached: string | null = null;
+    try { cached = localStorage.getItem(PATTERN_CACHE_KEY); } catch {/* private mode */}
+    if(cached) {
+      const blobUrl = URL.createObjectURL(new Blob([cached], {type: 'image/svg+xml'}));
+      img.src = blobUrl;
+      onCleanup(() => URL.revokeObjectURL(blobUrl));
+    } else {
+      img.src = PATTERN_URL;
+      fetch(PATTERN_URL)
+        .then((r) => r.ok ? r.text() : null)
+        .then((text) => {
+          if(!text) return;
+          try { localStorage.setItem(PATTERN_CACHE_KEY, text); } catch {/* quota */}
+        })
+        .catch(() => {/* ignore */});
+    }
 
     paint();
 
