@@ -1,4 +1,4 @@
-import {createSignal, JSX, onMount} from 'solid-js';
+import {createSignal, JSX, onCleanup, onMount} from 'solid-js';
 import AuthCard from '../AuthCard';
 import {useAuthFlow} from '../authFlow';
 import {sendCode} from '../mockAuth';
@@ -10,6 +10,7 @@ import {
   matchCountryByDigits,
   formatPhone
 } from '../data/countries';
+import {detectCountryIso2} from '../data/geo';
 import {AUTH_CONFIG} from '../config';
 import styles from '../authFlow.module.css';
 
@@ -113,6 +114,20 @@ export default function SignInCard(): JSX.Element {
   }
 
   onMount(() => phoneEl?.focus());
+
+  // tweb prefills the country from help.getNearestDc's `country` field. We
+  // don't speak MTProto, so use a public IP-geolocation provider. Only apply
+  // if the user hasn't touched the inputs yet — never clobber typing.
+  const ac = new AbortController();
+  onCleanup(() => ac.abort());
+  onMount(() => {
+    detectCountryIso2(ac.signal).then((iso2) => {
+      if(!iso2) return;
+      if(phone() || countryName()) return;
+      const row = COUNTRY_ROWS.find((r) => r.country.iso2 === iso2);
+      if(row) onCountrySelect(row);
+    });
+  });
 
   return (
     <AuthCard
