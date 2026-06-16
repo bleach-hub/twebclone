@@ -19,14 +19,14 @@
     <script>
       (function() {
         var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var key = 'tweb-clone-bg-' + (dark ? 'dark' : 'day') + '-v1';
+        var key = 'tweb-clone-bg-' + (dark ? 'dark' : 'day') + '-v2';
 
         // Apply to <html> (always present in <head> script), not <body>
         // (still null here) — survives cmd+shift+r without waiting for
         // DOMContentLoaded which is delayed by the module scripts below.
         var apply = function(url) {
           var s = document.documentElement.style;
-          s.background = 'url(' + url + ') center/100% 100% no-repeat fixed';
+          s.background = 'url(' + url + ') center/100% 150% no-repeat fixed';
         };
 
         var cached = null;
