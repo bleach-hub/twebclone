@@ -4,6 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Telegram</title>
+    <!-- Pre-JS background — paints the average gradient tone so there is no
+         white flash before <Background> mounts and the canvases composite in.
+         Matches DAY_COLORS / NIGHT_COLORS averages from Background.tsx. -->
+    <style>
+      html, body { margin: 0; padding: 0; min-height: 100%; }
+      body { background: #a8c489; }
+      @media (prefers-color-scheme: dark) {
+        body { background: #6e4ab3; }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
