@@ -4,72 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Telegram</title>
+    <meta name="color-scheme" content="light dark" />
     <style>
+      /* Match tweb's load sequence: empty → system color → pattern → UI.
+         No pre-rendered gradient. The system color (black/white from
+         color-scheme) is what the browser paints first, exactly like
+         web.telegram.org/k. */
       html, body { margin: 0; padding: 0; min-height: 100%; }
+      html { background: #ffffff; }
+      @media (prefers-color-scheme: dark) {
+        html { background: #000000; }
+      }
       body { background: transparent; }
-      /* Cards/auth UI are held back until the background paints so the user
-         sees the real swirly gradient first — mirrors web.telegram.org/k. */
+      /* Auth UI fades in after Background's canvases paint. */
       #root { opacity: 0; transition: opacity .15s ease-out; }
       #root.ready { opacity: 1; }
     </style>
-    <!-- Synchronously render the SAME gradient Background.tsx draws, so the
-         very first paint shows the real wallpaper (not a flat color or white
-         flash). When <Background> mounts and overlays its canvas on top, the
-         pixels match — no visible transition. -->
-    <script>
-      (function() {
-        var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        var key = 'tweb-clone-bg-' + (dark ? 'dark' : 'day') + '-v2';
-
-        // Apply to <html> (always present in <head> script), not <body>
-        // (still null here) — survives cmd+shift+r without waiting for
-        // DOMContentLoaded which is delayed by the module scripts below.
-        var apply = function(url) {
-          var s = document.documentElement.style;
-          s.background = 'url(' + url + ') center/100% 150% no-repeat fixed';
-        };
-
-        var cached = null;
-        try { cached = localStorage.getItem(key); } catch(e) {}
-        if(cached) { apply(cached); return; }
-
-        var DAY = [[219,221,187],[107,165,135],[213,216,141],[136,184,132]];
-        var NIGHT = [[254,196,150],[221,108,185],[150,47,191],[79,91,213]];
-        var POS = [[0.80,0.10],[0.60,0.20],[0.35,0.25],[0.25,0.60],[0.20,0.90],[0.40,0.80],[0.65,0.75],[0.75,0.40]];
-        var colors = dark ? NIGHT : DAY;
-        var pts = [0,1,2,3].map(function(i){ return [POS[(i*2)%POS.length][0], 1-POS[(i*2)%POS.length][1]]; });
-        var GW=64, GH=64;
-        var c = document.createElement('canvas'); c.width=GW; c.height=GH;
-        var ctx = c.getContext('2d');
-        var id = ctx.createImageData(GW, GH); var px = id.data;
-        var o = 0;
-        for(var y=0; y<GH; y++) {
-          var cdy = y/GH - 0.5; var cdy2 = cdy*cdy;
-          for(var x=0; x<GW; x++) {
-            var cdx = x/GW - 0.5;
-            var centerDistance = Math.sqrt(cdx*cdx + cdy2);
-            var swirl = 0.35 * centerDistance;
-            var theta = swirl*swirl*0.8*8.0;
-            var sin = Math.sin(theta), cosV = Math.cos(theta);
-            var pixelX = Math.max(0, Math.min(1, 0.5 + cdx*cosV - cdy*sin));
-            var pixelY = Math.max(0, Math.min(1, 0.5 + cdx*sin + cdy*cosV));
-            var sum=0, r=0, g=0, b=0;
-            for(var i=0; i<4; i++) {
-              var dx = pixelX - pts[i][0], dy = pixelY - pts[i][1];
-              var d = Math.max(0, 0.9 - Math.sqrt(dx*dx + dy*dy));
-              d = d*d*d*d;
-              sum += d;
-              r += d*colors[i][0]; g += d*colors[i][1]; b += d*colors[i][2];
-            }
-            px[o++] = r/sum; px[o++] = g/sum; px[o++] = b/sum; px[o++] = 255;
-          }
-        }
-        ctx.putImageData(id, 0, 0);
-        var url = c.toDataURL();
-        apply(url);
-        try { localStorage.setItem(key, url); } catch(e) {}
-      })();
-    </script>
   </head>
   <body>
     <div id="root"></div>
