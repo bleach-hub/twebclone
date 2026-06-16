@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Telegram</title>
     <style>
-      html, body { margin: 0; padding: 0; min-height: 100%; background: #000; }
+      html, body { margin: 0; padding: 0; min-height: 100%; }
+      body { background: transparent; }
       /* Cards/auth UI are held back until the background paints so the user
          sees the real swirly gradient first — mirrors web.telegram.org/k. */
       #root { opacity: 0; transition: opacity .15s ease-out; }
@@ -18,6 +19,20 @@
     <script>
       (function() {
         var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var key = 'tweb-clone-bg-' + (dark ? 'dark' : 'day') + '-v1';
+
+        // Apply to <html> (always present in <head> script), not <body>
+        // (still null here) — survives cmd+shift+r without waiting for
+        // DOMContentLoaded which is delayed by the module scripts below.
+        var apply = function(url) {
+          var s = document.documentElement.style;
+          s.background = 'url(' + url + ') center/100% 100% no-repeat fixed';
+        };
+
+        var cached = null;
+        try { cached = localStorage.getItem(key); } catch(e) {}
+        if(cached) { apply(cached); return; }
+
         var DAY = [[219,221,187],[107,165,135],[213,216,141],[136,184,132]];
         var NIGHT = [[254,196,150],[221,108,185],[150,47,191],[79,91,213]];
         var POS = [[0.80,0.10],[0.60,0.20],[0.35,0.25],[0.25,0.60],[0.20,0.90],[0.40,0.80],[0.65,0.75],[0.75,0.40]];
@@ -51,12 +66,8 @@
         }
         ctx.putImageData(id, 0, 0);
         var url = c.toDataURL();
-        var apply = function() {
-          document.body.style.background = 'url(' + url + ') center/100% 100% no-repeat';
-          document.body.style.backgroundAttachment = 'fixed';
-        };
-        if(document.body) apply();
-        else document.addEventListener('DOMContentLoaded', apply);
+        apply(url);
+        try { localStorage.setItem(key, url); } catch(e) {}
       })();
     </script>
   </head>
