@@ -16,9 +16,13 @@ export default function CountrySelect(props: {
   onInput?: (value: string) => void;
 }): JSX.Element {
   const [open, setOpen] = createSignal(false);
+  const [mounted, setMounted] = createSignal(false); // dropdown stays mounted during exit fade
+  const [active, setActive] = createSignal(false);    // .active triggers scale/opacity transition
   const [query, setQuery] = createSignal<string | null>(null); // null = show props.value
   let inputEl!: HTMLInputElement;
   let containerEl!: HTMLDivElement;
+  let dropdownEl: HTMLDivElement | undefined;
+  let hideTimeout: number | undefined;
 
   // While typing, filter by the query; otherwise show the full list.
   const rows = () => filterCountries(query() ?? '');
@@ -28,13 +32,31 @@ export default function CountrySelect(props: {
   function openPicker() {
     setOpen(true);
     setQuery('');
-    queueMicrotask(() => inputEl?.select());
+    if(hideTimeout !== undefined) {
+      clearTimeout(hideTimeout);
+      hideTimeout = undefined;
+    }
+    setMounted(true);
+    // mirror tweb: force reflow then add `.active` so the transition plays
+    queueMicrotask(() => {
+      if(dropdownEl) void dropdownEl.offsetWidth;
+      setActive(true);
+      inputEl?.select();
+    });
     document.addEventListener('mousedown', onDocMouseDown, {capture: true});
   }
 
   function closePicker() {
     setOpen(false);
     setQuery(null);
+    setActive(false);
+    // tweb hides after 200ms (countryInputField.ts:278)
+    if(hideTimeout === undefined) {
+      hideTimeout = window.setTimeout(() => {
+        setMounted(false);
+        hideTimeout = undefined;
+      }, 200);
+    }
     document.removeEventListener('mousedown', onDocMouseDown, {capture: true});
   }
 
@@ -61,7 +83,10 @@ export default function CountrySelect(props: {
     }
   }
 
-  onCleanup(() => document.removeEventListener('mousedown', onDocMouseDown, {capture: true}));
+  onCleanup(() => {
+    document.removeEventListener('mousedown', onDocMouseDown, {capture: true});
+    if(hideTimeout !== undefined) clearTimeout(hideTimeout);
+  });
 
   return (
     <div ref={containerEl} class={styles.container} classList={{[styles.open]: open()}}>
@@ -95,22 +120,28 @@ export default function CountrySelect(props: {
         />
       </div>
 
-      <Show when={open()}>
-        <div class={styles.dropdown}>
-          <ul class={styles.list}>
-            <For each={rows()}>
-              {(row) => (
-                <li class={styles.item} onMouseDown={(e) => {e.preventDefault(); pick(row);}}>
-                  <span class={styles.flag}>{row.emoji}</span>
-                  <span class={styles.name}>{row.country.default_name}</span>
-                  <span class={styles.code}>+{row.code.country_code}</span>
-                </li>
-              )}
-            </For>
-            <Show when={rows().length === 0}>
-              <li class={styles.empty}>No countries found</li>
-            </Show>
-          </ul>
+      <Show when={mounted()}>
+        <div
+          ref={dropdownEl}
+          class={styles.dropdown}
+          classList={{[styles.active]: active()}}
+        >
+          <div class={styles.scroll}>
+            <ul class={styles.list}>
+              <For each={rows()}>
+                {(row) => (
+                  <li class={styles.item} onMouseDown={(e) => {e.preventDefault(); pick(row);}}>
+                    <span class={styles.flag}>{row.emoji}</span>
+                    <span class={styles.name}>{row.country.default_name}</span>
+                    <span class={styles.code}>+{row.code.country_code}</span>
+                  </li>
+                )}
+              </For>
+              <Show when={rows().length === 0}>
+                <li class={styles.empty}>No countries found</li>
+              </Show>
+            </ul>
+          </div>
         </div>
       </Show>
     </div>

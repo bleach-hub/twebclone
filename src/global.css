@@ -6,6 +6,7 @@
      same colour pre-flattened over white (themeController.ts:565-566). */
   --light-primary-color: rgba(var(--primary-color-rgb), 0.08);
   --light-filled-primary-color: #ebf3fb;
+  --light-secondary-text-color: rgba(112, 117, 121, 0.08);
   --surface-color: #ffffff;
   --body-background-color: #f4f4f5;
   --color-text: #000000;
@@ -26,6 +27,7 @@
   --primary-color-rgb: 135, 116, 225;
   --light-primary-color: rgba(var(--primary-color-rgb), 0.08);
   --light-filled-primary-color: #2c2a3b;
+  --light-secondary-text-color: rgba(170, 170, 170, 0.08);
   --surface-color: #212121;
   --body-background-color: #181818;
   --color-text: #ffffff;

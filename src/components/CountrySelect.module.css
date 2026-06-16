@@ -33,63 +33,73 @@
   border-color: var(--primary-color);
 }
 
-/* dropdown surface */
+/* Dropdown — port of tweb's `.select-wrapper` (base.scss:858).
+   Scale .95→1 + opacity fade, top-center origin. .active class is toggled
+   in JS after a reflow so the transition actually plays. */
 .dropdown {
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(100% + 0.25rem);
-  z-index: 30;
+  top: calc(100% + 0.5rem);
+  max-height: 23.5rem;
+  z-index: 3;
   background-color: var(--surface-color);
-  border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  border-radius: 16px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  transform: scale(0.95);
   transform-origin: top center;
-  animation: dropdownIn 0.18s ease;
+  opacity: 0;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+  /* tweb's z-depth-3 (12dp elevation) */
+  box-shadow: 0 8px 17px 2px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12),
+    0 5px 5px -3px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes dropdownIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scaleY(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scaleY(1);
-  }
+.dropdown.active {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.scroll {
+  overflow-y: auto;
+  position: relative;
 }
 
 .list {
   list-style: none;
-  margin: 0;
-  padding: 0.5rem 0;
-  max-height: 18rem;
-  overflow-y: auto;
+  margin: 0.5rem 0;
+  padding: 0;
 }
 
+/* Row: emoji column 26px+2rem, name flex, code 80px. From base.scss:886. */
 .item {
-  display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.5rem 1.25rem;
+  padding: 0 1rem;
+  justify-content: space-between;
+  height: 3rem;
   cursor: pointer;
-  transition: background-color 0.12s;
+  text-align: start;
+  display: grid;
+  grid-template-columns: calc(26px + 2rem) 1fr 80px;
+  transition: background-color 0.2s;
 }
 
 .item:hover {
-  background-color: var(--light-primary-color);
+  background-color: var(--light-secondary-text-color);
 }
 
 .flag {
-  font-size: 1.5rem;
+  height: 26px;
+  width: 26px;
+  font-size: 26px;
   line-height: 1;
-  width: 1.75rem;
-  text-align: center;
-  flex: none;
 }
 
 .name {
-  flex: 1;
   font-size: 1rem;
   color: var(--color-text);
   white-space: nowrap;
@@ -98,9 +108,9 @@
 }
 
 .code {
-  color: var(--secondary-text-color);
+  color: var(--placeholder-color);
   font-size: 1rem;
-  flex: none;
+  text-align: end;
 }
 
 .empty {
