@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Telegram</title>
     <meta name="color-scheme" content="light dark" />
+    <!-- Apply theme synchronously so the page never flashes the wrong one.
+         User's explicit choice (if any) wins; otherwise follow the OS. -->
+    <script>
+      (function() {
+        var stored = null;
+        try { stored = localStorage.getItem('tweb-clone-theme'); } catch(e) {}
+        var night = stored
+          ? stored === 'night'
+          : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if(night) document.documentElement.classList.add('night');
+      })();
+    </script>
     <style>
       /* Match tweb's load sequence: empty → system color → pattern → UI.
          No pre-rendered gradient. The system color (black/white from
@@ -12,9 +24,7 @@
          web.telegram.org/k. */
       html, body { margin: 0; padding: 0; min-height: 100%; }
       html { background: #ffffff; }
-      @media (prefers-color-scheme: dark) {
-        html { background: #000000; }
-      }
+      html.night { background: #000000; }
       body { background: transparent; }
       /* Auth UI fades in after Background's canvases paint. */
       #root { opacity: 0; transition: opacity .15s ease-out; }

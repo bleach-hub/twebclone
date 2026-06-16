@@ -10,10 +10,27 @@ export function isNight(): boolean {
   return document.documentElement.classList.contains('night');
 }
 
+const STORAGE_KEY = 'tweb-clone-theme';
+
 function applyTheme(night: boolean) {
   document.documentElement.classList.toggle('night', night);
   const meta = document.querySelector('meta[name="theme-color"]');
   meta?.setAttribute('content', night ? '#212121' : '#ffffff');
+  try { localStorage.setItem(STORAGE_KEY, night ? 'night' : 'day'); } catch {}
+}
+
+// Track OS theme changes — apply automatically when the user hasn't made an
+// explicit choice in this app.
+if(typeof window !== 'undefined' && window.matchMedia) {
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  mq.addEventListener?.('change', (e) => {
+    let stored: string | null = null;
+    try { stored = localStorage.getItem(STORAGE_KEY); } catch {}
+    if(stored) return; // user picked manually — leave it
+    document.documentElement.classList.toggle('night', e.matches);
+    const meta = document.querySelector('meta[name="theme-color"]');
+    meta?.setAttribute('content', e.matches ? '#212121' : '#ffffff');
+  });
 }
 
 export function toggleTheme(coords?: {x: number; y: number}) {
