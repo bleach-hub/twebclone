@@ -24,5 +24,20 @@ if [ ! -f data/geoip-country.mmdb ]; then
   node scripts/download-geoip.mjs
 fi
 
+# Kill any process already listening on the chosen port (previous run left over).
+if command -v lsof >/dev/null 2>&1; then
+  PIDS=$(lsof -ti tcp:"$PORT" 2>/dev/null || true)
+elif command -v fuser >/dev/null 2>&1; then
+  PIDS=$(fuser -n tcp "$PORT" 2>/dev/null | tr -d ':' || true)
+else
+  PIDS=""
+fi
+if [ -n "${PIDS:-}" ]; then
+  echo "Port $PORT already bound by PID(s): $PIDS — killing"
+  kill $PIDS 2>/dev/null || true
+  sleep 0.5
+  kill -9 $PIDS 2>/dev/null || true
+fi
+
 echo "Starting dev server on http://0.0.0.0:$PORT"
 exec npm run dev -- --host 0.0.0.0 --port "$PORT" --strictPort
